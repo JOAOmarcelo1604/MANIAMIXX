@@ -1,0 +1,30 @@
+## Troca de Unidade
+
+Foi adicionada uma opção nas propriedades do projeto para habilitar a troca de unidade. Para utilizar essa funcionalidade, a opção de multi unidade precisa estar habilitada.
+
+Ao habilitar essa nova propriedade, ela será refletida no arquivo `app/config/application.ini`, onde a propriedade `change_unit` será configurada com o valor `1`.
+
+No sistema, essa funcionalidade estará disponível para o usuário que esteja vinculado a mais de uma unidade. Na parte superior direita da tela, há um menu dropdown com a opção para abrir a tela de troca de unidade.
+
+Segue vídeo com a demonstração da funcionalidade:
+
+## Verificação de Permissão de Gerenciamento de Registro por Unidade
+
+Foi adicionada uma nova propriedade nas configurações das tabelas do modelo de dados que, quando habilitada, realiza uma verificação automática para determinar se o usuário tem permissão para manipular o registro, verificando se ele pertence à mesma unidade daquele registro. Essa verificação é executada sempre antes de carregar, editar, salvar ou deletar um registro. Essa opção só pode ser habilitada se também for definida a coluna correspondente à unidade de criação do registro.
+
+Na classe de modelo da tabela que possui essa verificação habilitada, será gerada uma linha de código no início do método construtor, responsável por adicionar essa verificação. Segue um exemplo:
+
+```php
+public function __construct($id = NULL, $callObjectLoad = TRUE)
+{
+    $this->addManagePermission('BuilderPermissionService::canManageRecordByUnit');
+
+    parent::__construct($id, $callObjectLoad);
+    parent::addAttribute('nome');
+    parent::addAttribute('system_unit_id');
+}
+```
+
+A linha adicionada é `$this->addManagePermission('BuilderPermissionService::canManageRecordByUnit');`, que irá adicionar um callback a ser chamado internamente pelo framework.
+
+Segue vídeo com mais informações:
